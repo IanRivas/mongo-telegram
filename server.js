@@ -1,16 +1,17 @@
 const express = require('express');
 require("dotenv").config();
-const router = require('./network/routes.js');
+const routes = require('./network/routes.js');
+const cors = require('cors');
 
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(cors());
 
-// app.use(router);
-router(app);
-//la funcion que tengo en el routes que aca se llama router le tengo que pasar un servidor
-//le paso la app ,y a este le aplica use y le pasa una ruta y el router del component
+
+routes(app);
+
 
 
 app.use('/app',express.static('./public'));

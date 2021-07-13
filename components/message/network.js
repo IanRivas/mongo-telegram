@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const response = require("../../network/response.js");
+const controller = require("./controller.js")
 
 router.get('/',function(req, res){
     console.log(req.query.saludo);
@@ -9,15 +10,18 @@ router.get('/',function(req, res){
 })
 
 router.post('/',function(req, res){
-    if(req.query.error == 'okey'){
-        response.error(req,res,"error simulado", 400, "error para no mostrar al cliente");
-    } else {
-        console.log(`quien te conoce ${req.body.name}` );
-        response.success(req,res, "creado correctamente", 200);
-    }
+
+    controller.addMessage(req.body.user, req.body.message)
+        .then((fullMessage) => {
+            response.success(req,res, fullMessage, 200);
+        })
+        .catch(() => {
+            response.error(req, res, "Informacion invalida", 400, "error en el controller message post");
+        })
+
 });
+//con el then y el catch manejo la promesa y ejecuto los response
 
 module.exports = router;
 
-// el router de mi componente lo recibe routes.js y ahi routes recibe la app y 
-// le aplica todas las rutas de todos los componentes 
+
