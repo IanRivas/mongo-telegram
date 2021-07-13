@@ -1,3 +1,4 @@
+const store = require('./store')
 
 function addMessage(user, message){
     return new Promise((resolve, reject) => {
@@ -11,14 +12,19 @@ function addMessage(user, message){
             date: new Date()
         }
 
-        console.log(fullMessage);
+        store.add(fullMessage);
+
         resolve(fullMessage);
     })
 }
-//nuestro controller toma los datos de la req.body y genera el mensaje 
-//como es una promesa si alguno de los 2 no entran van a ejecutar el reject 
-//si todo sale bien crea el mensaje y hace el resolve y se envia de respuesta
+
+function getMessage(){
+    return new Promise((resolve, reject) => {
+        resolve(store.list());
+    })
+}
 
 module.exports = {
     addMessage,
+    getMessage
 }

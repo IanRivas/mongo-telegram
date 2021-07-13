@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const response = require("../../network/response.js");
-const controller = require("./controller.js")
+const response = require("../../network/response");
+const controller = require("./controller")
 
 router.get('/',function(req, res){
-    console.log(req.query.saludo);
-    console.log(req.headers);
-    response.success(req, res,"lista de mensajes",333);
+    controller.getMessage()
+        .then((messagelist)=>{
+            response.success(req, res, messagelist, 200);
+        })
+        .catch((err) => {
+            response.error(req, res, "Unexpected Error", 500, err)
+        });
 })
 
 router.post('/',function(req, res){
@@ -20,7 +24,7 @@ router.post('/',function(req, res){
         })
 
 });
-//con el then y el catch manejo la promesa y ejecuto los response
+
 
 module.exports = router;
 
