@@ -18,13 +18,38 @@ function addMessage(user, message){
     })
 }
 
-function getMessage(){
+function getMessage(filterUser){
     return new Promise((resolve, reject) => {
-        resolve(store.list());
+        resolve(store.list(filterUser));
     })
 }
 
+function updateMessage(id, messageEdit){
+    return new Promise (async (resolve, reject)=>{
+        if(!id || !messageEdit){
+            reject('invalid data')
+        }
+        const result = await store.updateText(id, messageEdit);
+        resolve(result);
+    });
+}
+
+function deleteMessage(id){
+    return new Promise((resolve, reject)=>{
+        if(!id){
+            reject('Id invalido');
+        }
+
+        store.remove(id)
+            .then(()=> resolve())
+            .catch(e => reject(e));
+    });
+}
+
+
 module.exports = {
     addMessage,
-    getMessage
+    getMessage,
+    updateMessage,
+    deleteMessage,
 }
