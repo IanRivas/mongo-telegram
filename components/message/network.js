@@ -1,7 +1,26 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path'); //este lo atremos para meterle una extencion al archivo multer
+//metimos multer para manejar archivos , los podemos enviar en mensajes 
+// en insominia como multipart form en vez de JSON 
 const router = express.Router();
 const response = require("../../network/response");
 const controller = require("./controller")
+
+// const upload = multer({
+//     dest: 'public/files', //esta es la ubicacion , en el root folder public folder files 
+// });
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        cb(null, 'public/files'); //donde se va a guardar el archivo
+    },
+    filename: function(req, file, cb){
+        cb(null, Date.now() + path.extname(file.originalname)) //poniendole la extencion al archivo , sin esto es simplemente un hash
+    }
+})
+
+const upload = multer({ storage: storage });
 
 router.get('/',function(req, res){
     const filterMessage = req.query.user || null;
@@ -15,9 +34,10 @@ router.get('/',function(req, res){
         });
 });
 
-router.post('/',function(req, res){
-
-    controller.addMessage(req.body.user, req.body.message)
+//paramos upload como midelware , y le decimos que la imagen esta sola por eso single y se va a llamar file en el insomnia
+router.post('/',upload.single('file'),function(req, res){
+    //req.file es el archivo que pasamos por insomnia 
+    controller.addMessage(req.body.chat ,req.body.user, req.body.message, req.file)
         .then((fullMessage) => {
             response.success(req,res, fullMessage, 200);
         })

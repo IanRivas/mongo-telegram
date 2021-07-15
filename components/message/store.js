@@ -7,13 +7,21 @@ function addMessage(message){
 }
 
 async function getMessage(filterUser){
-    let filter = {};
-    if(filterUser !== null){
-        filter = { user: filterUser };
-    }
-    const messages = await Model.find(filter);
-    return messages;
-
+    return new Promise((resolve, reject) => {
+        let filter = {};
+        if(filterUser !== null){
+            filter = { user: filterUser };
+        }
+        Model.find(filter)
+            .populate('user') //para decirle que vamos a popular datos
+            .exec((error, populated) => { //esto para ejecutar el populate
+                if(error){
+                    reject(error);
+                }
+                resolve(populated);
+            });
+            //el exec ya hace el catch , no hace falta 
+    });
 }
 
 async function updateText(id, message){
