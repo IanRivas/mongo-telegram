@@ -1,8 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path'); //este lo atremos para meterle una extencion al archivo multer
-//metimos multer para manejar archivos , los podemos enviar en mensajes 
-// en insominia como multipart form en vez de JSON 
+const path = require('path'); 
 const router = express.Router();
 const response = require("../../network/response");
 const controller = require("./controller")
@@ -13,10 +11,10 @@ const controller = require("./controller")
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
-        cb(null, 'public/files'); //donde se va a guardar el archivo
+        cb(null, 'public/files'); 
     },
     filename: function(req, file, cb){
-        cb(null, Date.now() + path.extname(file.originalname)) //poniendole la extencion al archivo , sin esto es simplemente un hash
+        cb(null, Date.now() + path.extname(file.originalname)) 
     }
 })
 
@@ -24,7 +22,6 @@ const upload = multer({ storage: storage });
 
 router.get('/',function(req, res){
     const filterMessage = req.query.user || null;
-    //esto lo creamos aparacte para filtrar por usuario y se lo pasamos al controller del get
     controller.getMessage(filterMessage)
         .then((messagelist)=>{
             response.success(req, res, messagelist, 200);
@@ -34,9 +31,7 @@ router.get('/',function(req, res){
         });
 });
 
-//paramos upload como midelware , y le decimos que la imagen esta sola por eso single y se va a llamar file en el insomnia
 router.post('/',upload.single('file'),function(req, res){
-    //req.file es el archivo que pasamos por insomnia 
     controller.addMessage(req.body.chat ,req.body.user, req.body.message, req.file)
         .then((fullMessage) => {
             response.success(req,res, fullMessage, 200);
@@ -56,9 +51,6 @@ router.patch('/:id', function(req, res){
         .catch((e)=>{
             response.error(req, res, 'Error Interno', 500, e);
         });
-    //todo lo que esta despues del /message/(esto lo va a tomar como id)
-    //en nuestro caso estamos poniendo id de los mensajes 
-    //y el texto es el mensaje que vamos a modificar en el message
 });
 
 router.delete('/:id',function(req, res){

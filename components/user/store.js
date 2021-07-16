@@ -13,7 +13,6 @@ async function getUserList(name){
     const users = await Model.find(filter);
     return users;
 }
-//el profe hizo lo mismo pero en general con solo return Model.find();
 
 module.exports = {
     add: addUser,

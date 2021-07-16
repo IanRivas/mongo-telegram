@@ -13,21 +13,20 @@ async function getMessage(filterUser){
             filter = { user: filterUser };
         }
         Model.find(filter)
-            .populate('user') //para decirle que vamos a popular datos
-            .exec((error, populated) => { //esto para ejecutar el populate
+            .populate('user') 
+            .exec((error, populated) => { 
                 if(error){
                     reject(error);
                 }
                 resolve(populated);
             });
-            //el exec ya hace el catch , no hace falta 
+            
     });
 }
 
 async function updateText(id, message){
     const foundMessage = await Model.findOne({
         _id: id
-        //con esto nos busca el id que sea igual al que le pasemos 
     });
 
     foundMessage.message = message;
@@ -39,7 +38,6 @@ function removeMessage(id){
     return Model.deleteOne({
         _id:id
     });
-    //estas cosas con model devuelve una promesa 
 }
 
 module.exports = {

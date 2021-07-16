@@ -1,4 +1,5 @@
-const store = require('./store')
+const store = require('./store');
+const {socket} = require('../../socket');
 
 function addMessage(chat, user, message, file){
     return new Promise((resolve, reject) => {
@@ -10,19 +11,20 @@ function addMessage(chat, user, message, file){
         let fileUrl = '';
         if(file){
             fileUrl = 'http://localhost:3000/app/files/'+ file.filename;
-            //el filename es el nombre que le asigna el file 
         }
 
         const fullMessage = {
-            chat: chat, // ahora los mensajes les agregamos un objectId chat 
+            chat: chat, 
             user: user,
             message: message,
             date: new Date(),
             file: fileUrl,
         }
-        //aca agregamos el archivo para que lo guarde en nuestra base de datos 
+        
 
         store.add(fullMessage);
+
+        socket.io.emit('message', fullMessage);
 
         resolve(fullMessage);
     })
